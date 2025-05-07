@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  AZURE_WEBAPP_NAME: 'YourAppName'
+  AZURE_WEBAPP_NAME: 'YourFireDetectionApp'
   PYTHON_VERSION: '3.9'
 
 jobs:
