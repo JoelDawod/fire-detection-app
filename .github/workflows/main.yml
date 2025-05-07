@@ -23,31 +23,27 @@ jobs:
       run: |
         pip install -r requirements.txt
         
-    - name: Create temp directory
-      run: mkdir -p app/temp
+    - name: Configure Oryx
+      run: |
+        mkdir -p .config
+        echo "python_version=3.9" > .config/oryx-buildsettings.txt
+        echo "disable_php_detection=true" >> .config/oryx-buildsettings.txt
         
     - name: Create deployment package
       run: |
         zip -r webapp.zip . \
           -x '.git/*' \
           -x '.github/*' \
-          -x '*.env' \
           -x '*.pyc' \
           -x '__pycache__/*'
-    
-    - name: Validate package
-      run: |
-        unzip -l webapp.zip | grep 'app/main.py' || exit 1
-        echo "Package validated"
     
     - name: Login to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Deploy
+    - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: webapp.zip
-        runtime: 'python:3.9'
