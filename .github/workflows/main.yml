@@ -31,10 +31,14 @@ jobs:
     - name: Zip the application files
       run: |
         zip -r webapp.zip . -x '.git/*' -x '.github/*'
-    
-    - name: Deploy to Azure Web App
+        
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-        package: webapp.zip
+        package: .
