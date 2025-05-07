@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'YourFireDetectionApp'  # Replace with your Azure app name
+  AZURE_WEBAPP_NAME: 'YourFireDetectionApp'  # Replace with your actual Azure app name
   PYTHON_VERSION: '3.9'
 
 jobs:
@@ -28,9 +28,13 @@ jobs:
     - name: Create temp directory
       run: mkdir -p app/temp
     
+    - name: Zip the application files
+      run: |
+        zip -r webapp.zip . -x '.git/*' -x '.github/*'
+    
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-        package: .
+        package: webapp.zip
