@@ -21,28 +21,20 @@ jobs:
     
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
-    - name: Configure Oryx
-      run: |
-        mkdir -p .config
-        echo "python_version=3.9" > .config/oryx-buildsettings.txt
-        echo "disable_php_detection=true" >> .config/oryx-buildsettings.txt
         
     - name: Create deployment package
       run: |
-        zip -r webapp.zip . \
-          -x '.git/*' \
-          -x '.github/*' \
-          -x '*.pyc' \
-          -x '__pycache__/*'
-    
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Deploy to Azure
+        # Create a clean deployment folder
+        mkdir -p deploy
+        cp -r app deploy/
+        cp requirements.txt deploy/
+        
+        # Create zip without build files
+        cd deploy && zip -r ../webapp.zip . && cd ..
+        
+    - name: Deploy directly (bypass Oryx)
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
