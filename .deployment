@@ -1,2 +1,5 @@
+@"
 [config]
 SCM_DO_BUILD_DURING_DEPLOYMENT=true
+command = bash startup.sh
+"@ | Out-File -FilePath .\.deployment -Encoding utf8
